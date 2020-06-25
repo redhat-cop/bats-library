@@ -1,0 +1,1 @@
+git clone https://github.com/ztombol/bats-support test/test_helper/bats-support
