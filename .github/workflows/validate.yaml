@@ -9,5 +9,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Checkout submodules
+        uses: textbook/git-checkout-submodule-action@master
+
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
+        with:
+          ignore: test
+
+      - name: Conftest
+        uses: redhat-cop/github-actions/confbatstest@master
+        with:
+          tests: test/tests.sh
