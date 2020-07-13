@@ -47,5 +47,10 @@ get_rego_namespaces() {
     fi
   done
 
+  # Safety check to make sure nothing above silently failed
+  if [[ ${#namespaces[*]} -lt 1 ]]; then
+    fail "# FATAL-ERROR: (conftest.bash): Found no namespaces; either in the 'policy' dir or matched the regex '${regex}'"
+  fi
+
   echo "${namespaces[*]}"
 }
