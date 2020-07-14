@@ -37,3 +37,5 @@ local.properties
 ## File-based project format:
 *.iws
 *.iml
+
+policy/
