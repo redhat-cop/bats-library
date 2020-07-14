@@ -32,7 +32,7 @@ print_info() {
       batslib_err "# ${file}"
     done
   else
-    fail "# FATAL-ERROR: (error-handling.bash): Expected TMP to be a path but got: '${tmp}'"
+    fail "# FATAL-ERROR: (error-handling.bash): Expected TMP to be a path but got: '${tmp}'" || return $?
   fi
 
   batslib_err "# Output"
