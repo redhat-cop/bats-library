@@ -1,5 +1,5 @@
 # Testing
-Each BATS addon must be tested by its own [BATS test](https://github.com/garethahealy/bats-library/blob/master/test/tests.sh#L5-L12).
+Each BATS addon must be tested by its own [BATS test](https://github.com/redhat-cop/bats-library/blob/master/test/tests.sh#L6).
 
 ## How do I write a test?
 Add a new test into the [tests file](test/tests.sh) or [failed tests file](test/tests_fail.sh), depending on the use case.
