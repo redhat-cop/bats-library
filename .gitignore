@@ -38,4 +38,8 @@ local.properties
 *.iws
 *.iml
 
+# Rego
 policy/
+
+# BATS
+test/test_helper/

@@ -1,5 +1,6 @@
 #!/usr/bin/env bats
 
+load bats-support-clone
 load test_helper/bats-support/load
 load load
 
