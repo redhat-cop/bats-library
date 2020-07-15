@@ -22,6 +22,15 @@ load load
   [ "$status" -eq 0 ]
 }
 
+@test "split_files - OCP Template.yml with required params" {
+  tmp=$(split_files "test/data/template-required-params-input.yml")
+
+  run diff "${tmp}/template-required-params-input.yml" test/data/template-required-params-expected.yml
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+}
+
 @test "split_files - Single JSON" {
   tmp=$(split_files "test/data/json-root.json" "true")
 

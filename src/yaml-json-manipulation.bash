@@ -6,7 +6,8 @@
 # Usage: split_files <search_path>
 #
 # Options:
-#   <search_path>   'find' search path for files to process
+#   <search_path>         'find' search path for files to process
+#   <dont_resolve_key>    Whether a known key should be resolved. If dont want to split the file, set this to 'true'
 # Globals:
 #   none
 # Returns:
@@ -40,13 +41,17 @@ split_files() {
       yq_opts="--yaml-output"
     fi
 
+    # Get the number of required params
+    local required_params_count
+    required_params_count=$(yq "[select(.parameters != null) | .parameters[] | select(.required == true)] | length" "${file}")
+
     local yq_command
-    if [[ "${key}" == "objects" ]]; then
-      # Process the template, split the List and write to a tmp dir
+    if [[ "${key}" == "objects" ]] && [[ "${required_params_count}" == "0" ]]; then
+      # Process the Template if we didnt find any required params, split the List and write to a tmp dir
       yq_command="oc process -f ${file} --local -o json | yq ${yq_opts} '.items[]'"
-    elif [[ "${key}" == "items" ]]; then
-      # Split the List and write to a tmp dir
-      yq_command="yq ${yq_opts} '.items[]' ${file}"
+    elif [[ "${key}" == "objects" ]] || [[ "${key}" == "items" ]]; then
+      # Split the Template/List and write to a tmp dir
+      yq_command="yq ${yq_opts} '.${key}[]' ${file}"
     elif [[ "${key}" == "." ]]; then
       # It doesnt require splitting, just write to a tmp dir to validate the syntax
       yq_command="yq ${yq_opts} '.' ${file}"
