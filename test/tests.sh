@@ -47,6 +47,19 @@ load load
 
   echo "${output}"
   [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "list-input.yml" ]
+  [ "${lines[1]}" = "template-input.yml" ]
+}
+
+@test "split_files - Directory with sub directories containing same filenames" {
+  tmp=$(split_files "test/data/multiple-subs")
+
+  run ls "${tmp}"
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "a_list-input.yml" ]
+  [ "${lines[1]}" = "b_list-input.yml" ]
 }
 
 @test "print_info" {

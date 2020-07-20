@@ -16,11 +16,14 @@ split_files() {
   local search_path="${1}"
   local dont_resolve_key="${2}"
 
+  local root_dir_search_path
   local tmp_write_dir
   if [[ -d "${search_path}" ]]; then
-    tmp_write_dir=$(_create_tmp_write_dir "${search_path}")
+    root_dir_search_path="${search_path}"
+    tmp_write_dir=$(_create_tmp_write_dir "${root_dir_search_path}")
   else
-    tmp_write_dir=$(_create_tmp_write_dir "$(dirname "${search_path}")")
+    root_dir_search_path=$(dirname "${search_path}")
+    tmp_write_dir=$(_create_tmp_write_dir "${root_dir_search_path}")
   fi
 
   # shellcheck disable=SC2038
@@ -59,9 +62,16 @@ split_files() {
       fail "# FATAL-ERROR: (yaml-json-manipulation.bash): Unsupported key: '${key}'" || return $?
     fi
 
-    # NOTE: eval is used due to yq not liking empty yq_opts
+    # NOTE: conftest does not search sub-dirs, so to handle files in sub-dirs, we:
+    # 1. remove the root search dir from the file name
+    # 2. replace any / with _ to create a flat filename
+    local file_without_root
+    file_without_root=${file/$root_dir_search_path\//}
+
     local output_file
-    output_file="${tmp_write_dir}/$(basename "${file}")"
+    output_file="${tmp_write_dir}/${file_without_root////_}"
+
+    # NOTE: eval is used due to yq not liking empty yq_opts
     eval "${yq_command} > ${output_file}"
 
     # Safety check to make sure nothing above silently failed
