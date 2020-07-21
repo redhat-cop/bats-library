@@ -51,21 +51,23 @@ split_files() {
       # It doesnt require splitting, just write to a tmp dir to validate the syntax
       yq_command="yq ${yq_opts} '.' ${file}"
     else
-      fail "# FATAL-ERROR: (yaml-json-manipulation.bash): Unsupported key: '${key}'"
+      fail "# FATAL-ERROR: (yaml-json-manipulation.bash): Unsupported key: '${key}'" || return $?
     fi
 
     # NOTE: eval is used due to yq not liking empty yq_opts
-    eval "${yq_command} > ${tmp_write_dir}/$(basename "${file}")"
+    local output_file
+    output_file="${tmp_write_dir}/$(basename "${file}")"
+    eval "${yq_command} > ${output_file}"
 
     # Safety check to make sure nothing above silently failed
-    if [[ ! -s "${file}" ]]; then
-      fail "# FATAL-ERROR: (yaml-json-manipulation.bash): File is empty: '${file}'"
+    if [[ ! -s "${output_file}" ]] ; then
+      fail "# FATAL-ERROR: (yaml-json-manipulation.bash): File is empty: '${output_file}'" || return $?
     fi
   done
 
   # Another safety check to make sure nothing above silently failed
   if [[ "$(find "${tmp_write_dir}" -type f | wc -l)" -lt 1 ]] ; then
-    fail "# FATAL-ERROR: (yaml-json-manipulation.bash): No files created: '${tmp_write_dir}'"
+    fail "# FATAL-ERROR: (yaml-json-manipulation.bash): No files created: '${tmp_write_dir}'" || return $?
   fi
 
   echo "${tmp_write_dir}"

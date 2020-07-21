@@ -31,7 +31,7 @@ helm_template() {
 
   # Safety check to make sure nothing above silently failed
   if [[ "$(find "${tmp_write_dir}" -type f | wc -l)" -lt 1 ]] ; then
-    fail "# FATAL-ERROR: (helm.bash): No files created: '${tmp_write_dir}'"
+    fail "# FATAL-ERROR: (helm.bash): No files created: '${tmp_write_dir}'" || return $?
   fi
 
   # As the templates files end up in '${chart-name}/templates', lets resolve that

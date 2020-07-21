@@ -25,7 +25,7 @@ file_contains_dollar() {
     if [[ -n "${found}" ]]; then
       batslib_err "# Failed: Found a dollar ($):" | batslib_err "${found}"
       if [[ "${should_fail}" == "true" ]]; then
-        fail ""
+        fail "" || return $?
       fi
     fi
   done

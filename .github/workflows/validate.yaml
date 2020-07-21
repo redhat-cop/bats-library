@@ -14,7 +14,20 @@ jobs:
         with:
           ignore: test
 
-      - name: Conftest
+      - name: Conftest - tests.sh
         uses: redhat-cop/github-actions/confbatstest@master
         with:
           tests: test/tests.sh
+
+      - name: Conftest - tests_fail.sh
+        uses: garethahealy/github-actions/confbatstest@conftest-raw
+        with:
+          raw: test/tests_fail.sh > tests_fail.log || exit 0
+
+      - name: Check failed tests
+        run: |
+          if [[ $(grep -c "not ok" tests_fail.log) -ne 6 ]]; then
+            echo "Expected a fixed number of failed jobs. Failing."
+            cat tests_fail.log
+            exit 1
+          fi
