@@ -13,6 +13,15 @@ load load
   [ "$status" -eq 0 ]
 }
 
+@test "split_files - k8s List.yaml" {
+  tmp=$(split_files "test/data/list-input.yaml")
+
+  run diff "${tmp}/list-input.yaml" test/data/list-expected.yaml
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+}
+
 @test "split_files - OCP Template.yml" {
   tmp=$(split_files "test/data/template-input.yml")
 
