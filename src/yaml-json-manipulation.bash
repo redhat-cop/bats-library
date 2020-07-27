@@ -27,7 +27,7 @@ split_files() {
   fi
 
   # shellcheck disable=SC2038
-  for file in $(find "${search_path}" \( -name "*.yml" -o -name "*.json" \) -type f | xargs); do
+  for file in $(find "${search_path}" \( -name "*.yml" -o -name "*.yaml" -o -name "*.json" \) -type f | xargs); do
     # Resolve the key from the file
     local key
     if [[ -z "${dont_resolve_key}" ]]; then
@@ -40,7 +40,7 @@ split_files() {
     fi
 
     local yq_opts
-    if [[ "${file#*.}" == "yml" ]]; then
+    if [[ "${file#*.}" == "yml" ]] || [[ "${file#*.}" == "yaml" ]] ; then
       yq_opts="--yaml-output"
     fi
 
