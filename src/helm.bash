@@ -11,7 +11,7 @@
 # Globals:
 #   none
 # Returns:
-#   string - path to where files have been processed, i.e.: /tmp/rhcop/${date-time}/${chart_dir}/${chart-name}/templates
+#   string - path to where files have been processed, i.e.: /tmp/rhcop/${date-time}/${chart_dir}
 helm_template() {
   local chart_dir=$1
   local template_opts=$2
@@ -20,24 +20,22 @@ helm_template() {
 
   mkdir -p "${tmp_write_dir}"
 
-  # shellcheck disable=SC2164
-  pushd "${chart_dir}" > /dev/null 2>&1
+  local output_file
+  output_file="${tmp_write_dir}/templates.yaml"
 
   # NOTE: eval is used due to helm not liking empty template_opts
-  eval "helm template ${template_opts} $(pwd) --output-dir ${tmp_write_dir} > /dev/null 2>&1"
-
-  # shellcheck disable=SC2164
-  popd > /dev/null 2>&1
+  eval "helm template ${template_opts} ${chart_dir} &> ${output_file}"
 
   # Safety check to make sure nothing above silently failed
-  if [[ "$(find "${tmp_write_dir}" -type f | wc -l)" -lt 1 ]] ; then
-    fail "# FATAL-ERROR: (helm.bash): No files created: '${tmp_write_dir}'" || return $?
+  if [[ ! -s "${output_file}" ]] || [[ $(wc -c "${output_file}" | awk '{print $1}') -le 1 ]] ; then
+    fail "# FATAL-ERROR: (helm.bash): File is empty: '${output_file}'" || return $?
   fi
 
-  # As the templates files end up in '${chart-name}/templates', lets resolve that
-  local first_templated_file
-  first_templated_file=$(find "${tmp_write_dir}" -type f | head -1 | xargs)
+  # Another, safety check to make sure nothing above silently failed
+  yq "." "${output_file}" > /dev/null 2>&1
+  if [[ $? -eq 1 ]] ; then
+    fail "# FATAL-ERROR: (helm.bash): File is not valid YAML: '${output_file}'" || return $?
+  fi
 
-  # shellcheck disable=SC2005
-  echo "$(dirname "${first_templated_file}")"
+  echo "${tmp_write_dir}"
 }
