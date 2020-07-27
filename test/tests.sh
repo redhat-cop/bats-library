@@ -4,6 +4,10 @@ load bats-support-clone
 load test_helper/bats-support/load
 load load
 
+setup_file() {
+  rm -rf /tmp/rhcop
+}
+
 @test "split_files - k8s List.yml" {
   tmp=$(split_files "test/data/list-input.yml")
 
@@ -84,7 +88,7 @@ load load
 @test "helm_template" {
   tmp=$(helm_template "test/data/test-chart")
 
-  run diff "${tmp}/serviceaccount.yaml" test/data/test-chart-serviceaccount-expected.yaml
+  run diff "${tmp}/templates.yaml" test/data/test-chart-expected.yaml
 
   echo "${output}"
   [ "$status" -eq 0 ]

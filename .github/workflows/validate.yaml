@@ -26,7 +26,7 @@ jobs:
 
       - name: Check failed tests
         run: |
-          if [[ $(grep -c "not ok" tests_fail.log) -ne 6 ]]; then
+          if [[ $(grep -c "not ok" tests_fail.log) -ne 7 ]]; then
             echo "Expected a fixed number of failed jobs. Failing."
             cat tests_fail.log
             exit 1

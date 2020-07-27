@@ -4,6 +4,10 @@ load bats-support-clone
 load test_helper/bats-support/load
 load load
 
+setup_file() {
+  rm -rf /tmp/rhcop
+}
+
 @test "split_files - Fail: empty.yml" {
   tmp=$(split_files "test/data/empty.yml")
 
@@ -22,6 +26,15 @@ load load
 
 @test "helm_template - Fail: empty chart" {
   tmp=$(helm_template "test/data/test-empty-chart")
+
+  run echo "${tmp}"
+
+  echo "${output}"
+  [ "$status" -eq 1 ]
+}
+
+@test "helm_template - Fail: required value" {
+  tmp=$(helm_template "test/data/test-chart-required-values")
 
   run echo "${tmp}"
 
