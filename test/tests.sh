@@ -151,5 +151,5 @@ setup_file() {
 
   echo "${output}"
   [ "$status" -eq 0 ]
-  [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy --namespace ocp.deprecated.ocp4_1.buildconfig_custom_strategy" ]
+  [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_1.buildconfig_custom_strategy --namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
 }
