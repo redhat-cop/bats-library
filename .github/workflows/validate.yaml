@@ -20,7 +20,7 @@ jobs:
           tests: test/tests.sh
 
       - name: Conftest - tests_fail.sh
-        uses: garethahealy/github-actions/confbatstest@conftest-raw
+        uses: redhat-cop/github-actions/confbatstest@master
         with:
           raw: test/tests_fail.sh > tests_fail.log || exit 0
 
