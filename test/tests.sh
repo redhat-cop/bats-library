@@ -134,8 +134,7 @@ setup_file() {
   [ "$status" -eq 0 ]
 }
 
-@test "get_rego_namespaces" {
-  skip
+@test "get_rego_namespaces - single regex" {
   namespaces=$(get_rego_namespaces "ocp\.deprecated\.ocp4_1.*")
 
   run echo "${namespaces}"
@@ -143,4 +142,14 @@ setup_file() {
   echo "${output}"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_1.buildconfig_custom_strategy" ]
+}
+
+@test "get_rego_namespaces - group regex" {
+  namespaces=$(get_rego_namespaces "(ocp\.deprecated\.ocp4_1.*|ocp\.deprecated\.ocp4_3.*)")
+
+  run echo "${namespaces}"
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_1.buildconfig_custom_strategy --namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
 }
