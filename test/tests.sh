@@ -147,7 +147,15 @@ setup_file() {
 @test "get_rego_namespaces - group regex" {
   namespaces=$(get_rego_namespaces "(ocp\.deprecated\.ocp4_1.*|ocp\.deprecated\.ocp4_3.*)")
 
-  run echo "${namespaces}"
+  # $namespaces can be returned in a different order depending on the OS; due to this, we:
+  # 1. replace spaces with equals and convert to array (this allows it to be sorted easier)
+  # 2. sort it
+  # 3. convert back to a string and replace equals with spaces, so we end us with the same output, but sorted
+  namespace_arr=("${namespaces//--namespace /--namespace=}")
+  namespace_arr_sorted=($(for l in ${namespace_arr[*]}; do echo "$l"; done | sort))
+  namespace_string=${namespace_arr_sorted[*]}
+
+  run echo "${namespace_string//=/ }"
 
   echo "${output}"
   [ "$status" -eq 0 ]
