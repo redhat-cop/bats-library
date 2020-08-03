@@ -40,7 +40,10 @@ get_rego_namespaces() {
 
     local current
     current="$(echo "${line/package/}" | xargs)"
-    if [[ "${current}" =~ ${regex} ]]; then
+
+    local found
+    found="$(echo "${current}" | grep -P "${regex}" || true)"
+    if [[ -n "${found}" ]]; then
       if [[ ! "${namespaces[*]}" =~ ${current} ]]; then
         namespaces+=("--namespace ${current}")
       fi
