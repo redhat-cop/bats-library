@@ -161,3 +161,31 @@ setup_file() {
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_1.buildconfig_custom_strategy --namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
 }
+
+@test "get_rego_namespaces - negative lookahead with group - ignore deprecated 4.1" {
+  namespaces=$(get_rego_namespaces "(?!ocp\.deprecated.ocp4_1.*)(ocp\.deprecated\.ocp4_2\.osb_v1|ocp\.deprecated\.ocp4_[0-3].*)")
+
+  # $namespaces can be returned in a different order depending on the OS; due to this, we:
+  # 1. replace spaces with equals and convert to array (this allows it to be sorted easier)
+  # 2. sort it
+  # 3. convert back to a string and replace equals with spaces, so we end us with the same output, but sorted
+  namespace_arr=("${namespaces//--namespace /--namespace=}")
+  namespace_arr_sorted=($(for l in ${namespace_arr[*]}; do echo "$l"; done | sort))
+  namespace_string=${namespace_arr_sorted[*]}
+
+  run echo "${namespace_string//=/ }"
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_2.authorization_openshift --namespace ocp.deprecated.ocp4_2.automationbroker_v1alpha1 --namespace ocp.deprecated.ocp4_2.catalogsourceconfigs_v1 --namespace ocp.deprecated.ocp4_2.catalogsourceconfigs_v2 --namespace ocp.deprecated.ocp4_2.operatorsources_v1 --namespace ocp.deprecated.ocp4_2.osb_v1 --namespace ocp.deprecated.ocp4_2.servicecatalog_v1beta1 --namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
+}
+
+@test "get_rego_namespaces - multiple negative lookahead with single - ignore deprecated 4.1/4.2" {
+  namespaces=$(get_rego_namespaces "(?!ocp\.deprecated.ocp4_1.*)(?!ocp\.deprecated\.ocp4_2)ocp\.deprecated\.ocp4_[0-3].*")
+
+  run echo "${namespaces}"
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
+}
