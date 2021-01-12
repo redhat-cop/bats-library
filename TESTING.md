@@ -7,8 +7,8 @@ All test data should be added under [data.](test/data).
 
 ## Execute Locally
 ```bash
-rm -rf /tmp/rhcop; bats test/tests.sh
-rm -rf /tmp/rhcop; bats test/tests_fail.sh
+bats test/tests.sh
+bats test/tests_fail.sh
 ```
 
 ## CI Linting
