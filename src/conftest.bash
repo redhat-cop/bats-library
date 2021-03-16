@@ -36,7 +36,8 @@ get_rego_namespaces() {
 
   # shellcheck disable=SC2038
   for file in $(find policy/* -name "*.rego" -type f | xargs); do
-    read -r line < "${file}"
+    local line
+    line="$(grep -P "^package " "${file}")"
 
     local current
     current="$(echo "${line/package/}" | xargs)"
