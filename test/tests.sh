@@ -62,6 +62,7 @@ setup_file() {
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "list-input.yml" ]
   [ "${lines[1]}" = "template-input.yml" ]
+  [[ "${#lines[@]}" -eq 2 ]]
 }
 
 @test "split_files - Directory with sub directories containing same filenames" {
@@ -73,6 +74,7 @@ setup_file() {
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "a_list-input.yml" ]
   [ "${lines[1]}" = "b_list-input.yml" ]
+  [[ "${#lines[@]}" -eq 2 ]]
 }
 
 @test "print_info" {
@@ -142,6 +144,7 @@ setup_file() {
   echo "${output}"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_1.buildconfig_custom_strategy" ]
+  [[ "${#lines[@]}" -eq 1 ]]
 }
 
 @test "get_rego_namespaces - group regex" {
@@ -160,6 +163,7 @@ setup_file() {
   echo "${output}"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_1.buildconfig_custom_strategy --namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
+  [[ "${#lines[@]}" -eq 1 ]]
 }
 
 @test "get_rego_namespaces - negative lookahead with group - ignore deprecated 4.1" {
@@ -178,6 +182,7 @@ setup_file() {
   echo "${output}"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_2.authorization_openshift --namespace ocp.deprecated.ocp4_2.automationbroker_v1alpha1 --namespace ocp.deprecated.ocp4_2.catalogsourceconfigs_v1 --namespace ocp.deprecated.ocp4_2.catalogsourceconfigs_v2 --namespace ocp.deprecated.ocp4_2.operatorsources_v1 --namespace ocp.deprecated.ocp4_2.osb_v1 --namespace ocp.deprecated.ocp4_2.servicecatalog_v1beta1 --namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
+  [[ "${#lines[@]}" -eq 1 ]]
 }
 
 @test "get_rego_namespaces - multiple negative lookahead with single - ignore deprecated 4.1/4.2" {
@@ -188,4 +193,29 @@ setup_file() {
   echo "${output}"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "--namespace ocp.deprecated.ocp4_3.buildconfig_jenkinspipeline_strategy" ]
+  [[ "${#lines[@]}" -eq 1 ]]
+}
+
+@test "filter_policies - deprek8ion" {
+  conftest pull github.com/swade1987/deprek8ion.git//policies
+  filter_policies_by_version "1.16" ""
+
+  run ls policy/kubernetes-*
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "policy/kubernetes-1.16.rego" ]
+  [[ "${#lines[@]}" -eq 1 ]]
+}
+
+@test "filter_policies - redhat-cop" {
+  conftest pull github.com/redhat-cop/rego-policies.git//policy
+  filter_policies_by_version "" "3.11"
+
+  run ls -d policy/ocp/deprecated/[0-9]_*
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "policy/ocp/deprecated/3_11" ]
+  [[ "${#lines[@]}" -eq 1 ]]
 }
