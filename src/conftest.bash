@@ -58,3 +58,47 @@ get_rego_namespaces() {
 
   echo "${namespaces[*]}"
 }
+
+# filter_policies_by_version
+# ====================
+#
+# Summary: Filters (via rm -f) deprek8ion and redhat-cop based on the version in the path
+#
+# Usage: filter_policies_by_version ${deprek8ion_k8s_version} ${redhatcop_ocp_version}
+#
+# Options:
+#   <deprek8ion_k8s_version>    Max version to use for deprek8ion policies
+#   <redhatcop_ocp_version>     Max version to use for redhat-cop deprecated policies
+#   <policy_dir>                Directory where policies are, defaults to: policy
+# Globals:
+#   none
+# Returns:
+#   none
+filter_policies_by_version() {
+  local deprek8ion_k8s_version="${1}"
+  local redhatcop_ocp_version="${2}"
+  local policy_dir="${3:-policy}"
+
+  if [[ -n "${deprek8ion_k8s_version}" ]]; then
+    # shellcheck disable=SC2038
+    for file in $(find "${policy_dir}" -name "kubernetes-*.rego" -type f | xargs); do
+      k8s_ver=$(echo "$file" | awk '{split($0,a,"-"); split(a[2],b,".rego"); print b[1]}')
+      if [[ $(echo "$k8s_ver > $deprek8ion_k8s_version" | bc -l) -eq 1 ]]; then
+        #echo "DEBUG: Matched deprek8ion: $file"
+        rm -f "${file}"
+      fi
+    done
+  fi
+
+  if [[ -n "${redhatcop_ocp_version}" ]]; then
+    # shellcheck disable=SC2038
+    for dir in $(find "${policy_dir}/ocp/deprecated" -name "[0-9]_*" -type d -maxdepth 1 | xargs); do
+      ocp_ver=$(basename "${dir}" | awk '{sub("_",".",$0); print $0}')
+      echo "$ocp_ver > $redhatcop_ocp_version"
+      if [[ $(echo "$ocp_ver > $redhatcop_ocp_version" | bc -l) -eq 1 ]]; then
+        #echo "DEBUG: Matched redhat-cop: $dir"
+        rm -rf "${dir}"
+      fi
+    done
+  fi
+}
