@@ -32,9 +32,9 @@ helm_template() {
   fi
 
   # Another, safety check to make sure nothing above silently failed
-  yq "." "${output_file}" > /dev/null 2>&1
+  helm lint . > /dev/null 2>&1
   if [[ $? -eq 1 ]] ; then
-    fail "# FATAL-ERROR: (helm.bash): File is not valid YAML: '${output_file}'" || return $?
+    fail "# FATAL-ERROR: (helm.bash): File is not valid YAML: '${output_file}', helm lint failed" || return $?
   fi
 
   echo "${tmp_write_dir}"
