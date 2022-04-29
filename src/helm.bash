@@ -33,7 +33,7 @@ helm_template() {
   fi
 
   # Safety check to make sure nothing above silently failed
-  return_message=$(helm lint ${template_opts} ${chart_dir})
+  return_message=$(eval "helm lint ${template_opts} ${chart_dir}")
   if [[ $? -eq 1 ]] ; then
     fail "# FATAL-ERROR: (helm.bash): helm lint failed: " || return $?
   fi
