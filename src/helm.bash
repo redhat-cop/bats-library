@@ -15,6 +15,7 @@
 helm_template() {
   local chart_dir=$1
   local template_opts=$2
+  local return_message
   local tmp_write_dir
   tmp_write_dir=/tmp/rhcop/$(date +'%d-%m-%Y-%H-%M')/"${chart_dir}"
 
@@ -22,20 +23,18 @@ helm_template() {
 
   local output_file
   output_file="${tmp_write_dir}/templates.yaml"
-
-  # NOTE: eval is used due to helm not liking empty template_opts
-  eval "helm template ${template_opts} ${chart_dir} &> ${output_file}"
+  lint_output_file="${tmp_write_dir}/linting.output"
 
   # Safety check to make sure nothing above silently failed
-  if [[ ! -s "${output_file}" ]] || [[ $(wc -c "${output_file}" | awk '{print $1}') -le 1 ]] ; then
-    fail "# FATAL-ERROR: (helm.bash): File is empty: '${output_file}'" || return $?
+  if ! return_message=$(eval "helm template ${template_opts} ${chart_dir} > ${output_file}") ; then
+    fail "# FATAL-ERROR: (helm.bash): helm template failed: ${return_message}" || return $?
   fi
 
-  # Another, safety check to make sure nothing above silently failed
-  yq "." "${output_file}" > /dev/null 2>&1
-  if [[ $? -eq 1 ]] ; then
-    fail "# FATAL-ERROR: (helm.bash): File is not valid YAML: '${output_file}'" || return $?
+  # Safety check to make sure nothing above silently failed
+  if ! lint_return_message=$(eval "helm lint ${template_opts} ${chart_dir} > ${lint_output_file}") ; then
+    fail "# FATAL-ERROR: (helm.bash): helm lint failed: ${lint_return_message} " || return $?
   fi
 
   echo "${tmp_write_dir}"
+
 }
