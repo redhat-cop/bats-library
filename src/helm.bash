@@ -23,19 +23,16 @@ helm_template() {
 
   local output_file
   output_file="${tmp_write_dir}/templates.yaml"
-
-  # NOTE: eval is used due to helm not liking empty template_opts
-  return_message=$(eval "helm template ${template_opts} ${chart_dir} &> ${output_file}")
+  lint_output_file="${tmp_write_dir}/linting.output"
 
   # Safety check to make sure nothing above silently failed
-  if [[ $? -ne 0 ]] ; then
+  if ! return_message=$(eval "helm template ${template_opts} ${chart_dir} > ${output_file}") ; then
     fail "# FATAL-ERROR: (helm.bash): helm template failed: ${return_message}" || return $?
   fi
 
   # Safety check to make sure nothing above silently failed
-  return_message=$(eval "helm lint ${template_opts} ${chart_dir}")
-  if [[ $? -ne 0 ]] ; then
-    fail "# FATAL-ERROR: (helm.bash): helm lint failed: ${return_message} " || return $?
+  if ! lint_return_message=$(eval "helm lint ${template_opts} ${chart_dir} > ${lint_output_file}") ; then
+    fail "# FATAL-ERROR: (helm.bash): helm lint failed: ${lint_return_message} " || return $?
   fi
 
   echo "${tmp_write_dir}"
