@@ -24,6 +24,7 @@ helm_template() {
   local output_file
   output_file="${tmp_write_dir}/templates.yaml"
   lint_output_file="${tmp_write_dir}/linting.output"
+
   # Fetch dependencies
   if ! return_message=$(eval "helm dep up ${chart_dir}") ; then
     fail "# FATAL-ERROR: (helm.bash): helm dependencies update failed: ${return_message}" || return $?
@@ -35,10 +36,9 @@ helm_template() {
   fi
 
   # Safety check to make sure nothing above silently failed
-  if ! lint_return_message=$(eval "helm lint ${template_opts} ${chart_dir} > ${lint_output_file}") ; then
+  if ! lint_return_message=$(eval "helm lint ${chart_dir} > ${lint_output_file}") ; then
     fail "# FATAL-ERROR: (helm.bash): helm lint failed: ${lint_return_message} " || return $?
   fi
 
   echo "${tmp_write_dir}"
-
 }
