@@ -1,0 +1,29 @@
+---
+# Source: test-chart-with-dep/charts/operatorhub/templates/operatorgroup.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: "testing-operator" 
+  namespace: "testing"
+spec:
+  targetNamespaces:
+  - testing
+---
+# Source: test-chart-with-dep/charts/operatorhub/templates/subscription.yaml
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: "testing-operator"
+  namespace: "testing"
+spec:
+  channel: "early-access" 
+  installPlanApproval: "Automatic"
+  name: "testing-operator"
+  source: "redhat-operators"
+  sourceNamespace: "openshift-marketplace"
+---
+# Source: test-chart-with-dep/templates/deployment.yaml
+apiVersion: v1
+kind: Thing
+metadata:
+  name: hello

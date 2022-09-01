@@ -1,0 +1,11 @@
+operatorhub:
+  enabled: true
+  namespace: testing
+  operators:
+    - name: testing-operator
+      subscription:
+        channel: early-access
+        approval: Automatic
+        operatorName: testing-operator
+      operatorgroup:
+        create: true

@@ -42,6 +42,15 @@ setup_file() {
   [ "$status" -eq 0 ]
 }
 
+@test "helm_template - Fail: missing dependancy" {
+  tmp=$(helm_template "test/data/test-chart-with-missing-dep")
+
+  run echo "${tmp}"
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+}
+
 @test "file_contains_dollar - Fail: Found dollar in file" {
   tmp=$(split_files "test/data/template-with-missingparam-input.yml")
   file_contains_dollar "${tmp}/template-with-missingparam-input.yml"

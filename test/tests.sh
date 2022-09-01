@@ -96,6 +96,15 @@ setup_file() {
   [ "$status" -eq 0 ]
 }
 
+@test "helm_template with dependency" {
+  tmp=$(helm_template "test/data/test-chart-with-dep")
+
+  run diff "${tmp}/templates.yaml" test/data/test-chart-with-dep-expected.yaml
+
+  echo "${output}"
+  [ "$status" -eq 0 ]
+}
+
 @test "conftest_pull" {
   rm -rf policy/
   conftest_pull
