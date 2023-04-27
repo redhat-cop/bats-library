@@ -32,12 +32,12 @@ helm_template() {
 
   # Safety check to make sure nothing above silently failed
   if ! return_message=$(eval "helm template ${template_opts} ${chart_dir} > ${output_file}") ; then
-    fail "# FATAL-ERROR: (helm.bash): helm template failed: ${return_message}" || return $?
+    fail "# FATAL-ERROR: (helm.bash): helm template failed: ${return_message} : $(cat "${output_file}")" || return $?
   fi
 
   # Safety check to make sure nothing above silently failed
-  if ! lint_return_message=$(eval "helm lint ${chart_dir} > ${lint_output_file}") ; then
-    fail "# FATAL-ERROR: (helm.bash): helm lint failed: ${lint_return_message} " || return $?
+  if ! return_message=$(eval "helm lint ${chart_dir} > ${lint_output_file}") ; then
+    fail "# FATAL-ERROR: (helm.bash): helm lint failed: ${return_message} : $(cat "${lint_output_file}")" || return $?
   fi
 
   echo "${tmp_write_dir}"
