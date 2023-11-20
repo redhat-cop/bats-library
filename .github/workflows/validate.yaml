@@ -21,12 +21,12 @@ jobs:
           ignore: test
 
       - name: Conftest - tests.sh
-        uses: redhat-cop/github-actions/confbatstest@master
+        uses: redhat-cop/github-actions/confbatstest@v4
         with:
           tests: test/tests.sh
 
       - name: Conftest - tests_fail.sh
-        uses: redhat-cop/github-actions/confbatstest@master
+        uses: redhat-cop/github-actions/confbatstest@v4
         with:
           raw: test/tests_fail.sh > tests_fail.log || exit 0
 
