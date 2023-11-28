@@ -1,4 +1,5 @@
 ![Run validation checks](https://github.com/redhat-cop/bats-library/workflows/Run%20validation%20checks/badge.svg)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/redhat-cop/bats-library/badge)](https://securityscorecards.dev/viewer/?uri=github.com/redhat-cop/bats-library)
 
 # 🦇BATS Library 🦇
 [Bash Automated Testing System](https://github.com/bats-core/bats-core) Library - a collection of `test_helper` functions and files 

@@ -3,5 +3,19 @@
   "extends": [
     "config:best-practices",
     "schedule:earlyMondays"
+  ],
+  "packageRules": [
+    {
+      "matchDepTypes": [
+        "action"
+      ],
+      "matchPackageNames": [
+        "slsa-framework/slsa-github-generator"
+      ],
+      "matchUpdateTypes": [
+        "pinDigest"
+      ],
+      "enabled": false
+    }
   ]
 }

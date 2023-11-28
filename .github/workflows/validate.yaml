@@ -1,10 +1,9 @@
-name: Run validation checks
+name: Validate and Release
 
-on:
-  push:
-  pull_request:
-  schedule:
-    - cron: "0 0 1 * *"
+on: [push, pull_request]
+
+# Declare default permissions as read only.
+permissions: read-all
 
 jobs:
   validate:
@@ -18,7 +17,7 @@ jobs:
         env:
           SHELLCHECK_OPTS: -x
         with:
-          ignore: test
+          ignore_paths: test
 
       - name: Conftest - tests.sh
         uses: redhat-cop/github-actions/confbatstest@11f2ce27643eb7c76ac3623cb99d9b08be30d762 # v4
@@ -37,3 +36,52 @@ jobs:
             cat tests_fail.log
             exit 1
           fi
+
+      - name: Tar and Generate hashes
+        shell: bash
+        id: hash
+        run: |
+          tar cvf bats-library.tar load.bash src/
+          
+          echo "hashes=$(sha256sum bats-library.tar | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload bats-library.tar
+        uses: actions/upload-artifact@v3
+        with:
+          name: bats-library.tar
+          path: bats-library.tar
+          if-no-files-found: error
+          retention-days: 5
+
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+
+  provenance:
+    needs: [validate]
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    with:
+      base64-subjects: "${{ needs.validate.outputs.hashes }}"
+      upload-assets: true
+
+  release:
+    needs: [validate, provenance]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+      - name: Download bats-library.tar
+        uses: actions/download-artifact@v3
+        with:
+          name: bats-library.tar
+
+      - name: Upload assets to release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: |
+            bats-library.tar
