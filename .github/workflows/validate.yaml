@@ -20,12 +20,12 @@ jobs:
           ignore_paths: test
 
       - name: Conftest - tests.sh
-        uses: redhat-cop/github-actions/confbatstest@11f2ce27643eb7c76ac3623cb99d9b08be30d762 # v4
+        uses: redhat-cop/github-actions/confbatstest@e4729075dcd3f34946b80df6b1bfb952b9fee166 # v4
         with:
           tests: test/tests.sh
 
       - name: Conftest - tests_fail.sh
-        uses: redhat-cop/github-actions/confbatstest@11f2ce27643eb7c76ac3623cb99d9b08be30d762 # v4
+        uses: redhat-cop/github-actions/confbatstest@e4729075dcd3f34946b80df6b1bfb952b9fee166 # v4
         with:
           raw: test/tests_fail.sh > tests_fail.log || exit 0
 
