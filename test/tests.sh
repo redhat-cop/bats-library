@@ -1,4 +1,5 @@
 #!/usr/bin/env bats
+# shellcheck disable=all
 
 load bats-support-clone
 load test_helper/bats-support/load

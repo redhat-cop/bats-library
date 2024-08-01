@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: Shellcheck
+        description: Check syntax of bash files
+        entry: shellcheck
+        language: python
+        types: [ shell ]
+        require_serial: true # shellcheck can detect sourcing this way
