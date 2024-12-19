@@ -5,9 +5,16 @@ on: [push, pull_request]
 # Declare default permissions as read only.
 permissions: read-all
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
+    env:
+      # renovate: datasource=pypi depName=yq
+      YQ_VERSION: 3.4.3
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
@@ -17,6 +24,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+      - name: Setup Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5
+
+      - name: Setup yq (pypi.org/project/yq/)
+        run: |
+          pip3 install yq==${YQ_VERSION}
+
+      - name: Setup Bats
+        uses: bats-core/bats-action@2104b40bb7b6c2d5110b23a26b0bf265ab8027db # 3.0.0
+
+      - name: Setup Conftest
+        uses: princespaghetti/setup-conftest@8988df9968f72ab406646e033cfe1765eb201e94 # v1.1.22
+
+      - name: Setup oc
+        uses: redhat-actions/openshift-tools-installer@144527c7d98999f2652264c048c7a9bd103f8a82 # v1
+        with:
+          oc: "4"
+
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
         env:
@@ -25,20 +50,16 @@ jobs:
           ignore_paths: test
 
       - name: Conftest - tests.sh
-        uses: redhat-cop/github-actions/confbatstest@0c6e3b63690cfa917a0ddc162efdfda3da82d66c # v4.4
-        with:
-          tests: test/tests.sh
+        run: |
+          test/tests.sh
 
       - name: Conftest - tests_fail.sh
-        uses: redhat-cop/github-actions/confbatstest@0c6e3b63690cfa917a0ddc162efdfda3da82d66c # v4.4
-        with:
-          raw: test/tests_fail.sh > tests_fail.log || exit 0
-
-      - name: Check failed tests
         run: |
+          test/tests_fail.sh > tests_fail.log || exit 0
+          cat tests_fail.log
+          
           if [[ $(grep -c "not ok" tests_fail.log) -ne 9 ]]; then
             echo "Expected a fixed number of failed jobs. Failing."
-            cat tests_fail.log
             exit 1
           fi
 
