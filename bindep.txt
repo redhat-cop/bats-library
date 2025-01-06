@@ -1,0 +1,3 @@
+findutils [platform:redhat platform:brew]
+diffutils [platform:redhat platform:brew]
+bc [platform:redhat platform:brew]
