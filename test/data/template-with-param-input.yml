@@ -28,4 +28,3 @@ objects:
 parameters:
 - name: NAME
   value: Foo
-

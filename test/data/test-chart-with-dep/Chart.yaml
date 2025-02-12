@@ -23,6 +23,6 @@ version: 0.1.0
 appVersion: 1.16.0
 dependencies:
   - name: operatorhub
-    version: "0.0.9"
+    version: "0.0.11"
     repository: https://redhat-cop.github.io/helm-charts
     condition: operatorhub.enabled

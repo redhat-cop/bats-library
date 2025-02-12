@@ -20,7 +20,7 @@ jobs:
         uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
         with:
           egress-policy: audit
-          
+
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -57,7 +57,7 @@ jobs:
         run: |
           test/tests_fail.sh > tests_fail.log || exit 0
           cat tests_fail.log
-          
+
           if [[ $(grep -c "not ok" tests_fail.log) -ne 9 ]]; then
             echo "Expected a fixed number of failed jobs. Failing."
             exit 1
@@ -68,7 +68,7 @@ jobs:
         id: hash
         run: |
           tar cvf bats-library.tar load.bash src/
-          
+
           echo "hashes=$(sha256sum bats-library.tar | base64 -w0)" >> "$GITHUB_OUTPUT"
 
       - name: Upload bats-library.tar

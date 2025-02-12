@@ -3,7 +3,7 @@
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: "testing-operator" 
+  name: "testing-operator"
   namespace: "testing"
 spec:
   targetNamespaces:
@@ -16,7 +16,7 @@ metadata:
   name: "testing-operator"
   namespace: "testing"
 spec:
-  channel: "early-access" 
+  channel: "early-access"
   installPlanApproval: "Automatic"
   name: "testing-operator"
   source: "redhat-operators"
