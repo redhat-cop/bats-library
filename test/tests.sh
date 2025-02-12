@@ -222,10 +222,10 @@ setup_file() {
   conftest pull github.com/redhat-cop/rego-policies.git//policy
   filter_policies_by_version "" "3.11"
 
-  run ls -d policy/ocp/deprecated/[0-9]_*
+  run ls -d policy/ocp/deprecated/ocp[0-9]_*
 
   echo "${output}"
   [ "$status" -eq 0 ]
-  [ "${lines[0]}" = "policy/ocp/deprecated/3_11" ]
+  [ "${lines[0]}" = "policy/ocp/deprecated/ocp3_11" ]
   [[ "${#lines[@]}" -eq 1 ]]
 }

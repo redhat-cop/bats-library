@@ -92,8 +92,8 @@ filter_policies_by_version() {
 
   if [[ -n "${redhatcop_ocp_version}" ]]; then
     # shellcheck disable=SC2038
-    for dir in $(find "${policy_dir}/ocp/deprecated" -name "[0-9]_*" -type d -maxdepth 1 | xargs); do
-      ocp_ver=$(basename "${dir}" | awk '{sub("_",".",$0); print $0}')
+    for dir in $(find "${policy_dir}/ocp/deprecated" -maxdepth 1 -name "ocp[0-9]_*" -type d  | xargs); do
+      ocp_ver=$(basename "${dir}" | awk '{sub("_",".",$0);sub("ocp","",$0); print $0}')
       echo "$ocp_ver > $redhatcop_ocp_version"
       if [[ $(echo "$ocp_ver > $redhatcop_ocp_version" | bc -l) -eq 1 ]]; then
         #echo "DEBUG: Matched redhat-cop: $dir"
