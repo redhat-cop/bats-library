@@ -35,7 +35,7 @@ jobs:
         uses: bats-core/bats-action@2104b40bb7b6c2d5110b23a26b0bf265ab8027db # 3.0.0
 
       - name: Setup Conftest
-        uses: princespaghetti/setup-conftest@8988df9968f72ab406646e033cfe1765eb201e94 # v1.1.22
+        uses: princespaghetti/setup-conftest@d75fd184422abf484802a0fefc0453f2cda20f95 # v1.1.23
 
       - name: Setup oc
         uses: redhat-actions/openshift-tools-installer@144527c7d98999f2652264c048c7a9bd103f8a82 # v1
