@@ -5,6 +5,10 @@ on: [push, pull_request]
 # Declare default permissions as read only.
 permissions: read-all
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
